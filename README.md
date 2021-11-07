@@ -1,3 +1,5 @@
+Public Ethereum account for NFT certificate: `0xE0fF737685fdE7Fd0933Fc280D53978b3d0700D5`
+
 # Fashion brand store with redeemable NFTs
 
 eCommerce store where you can purchase physical goods, i.e. clothing as redeemable NFTs.
