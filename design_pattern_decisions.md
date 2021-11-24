@@ -1,0 +1,2 @@
+## Inheritance and Interfaces
+- `DCommerce` contract inherits `ERC1155PresetMinterPauser`  OpenZeppelin ERC1155 implementation contract with Role based access control and Circuit Break design patterns already implemented.
