@@ -62,7 +62,7 @@ contract Store is Ownable {
   }
 
   /// @notice Adds new store manager.
-  /// @param _newManagerAddress New manager's address
+  /// @param _newManagerAddress New manager's address.
   function addStoreManager(address _newManagerAddress) public onlyOwner {
     require(!storeManagers[_newManagerAddress], "Already added!");
     storeManagers[_newManagerAddress] = true;
@@ -70,11 +70,18 @@ contract Store is Ownable {
   }
 
   /// @notice Removes store manager.
-  /// @param _managerAddress New manager's address
+  /// @param _managerAddress New manager's address.
   function removeStoreManager(address _managerAddress) public onlyOwner {
     require(storeManagers[_managerAddress], "Not a manager!");
     storeManagers[_managerAddress] = false;
     emit RemoveManager(_managerAddress);
+  }
+
+  /// @notice Checks if given address is store manager.  
+  /// @param _checkAddress Address to check.
+  /// @return boolean
+  function isStoreManager(address _checkAddress) public view returns(bool) {
+    return storeManagers[_checkAddress];
   }
 
   function withdraw() public onlyOwner {
