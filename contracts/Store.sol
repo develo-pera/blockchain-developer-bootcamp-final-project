@@ -29,10 +29,11 @@ contract Store is Ownable {
   event AddNewItem(uint itemId);
   event BuyItem(uint indexed itemId, address indexed buyer);
   event ReedemItem(uint indexed itemId, address indexed redeemer, OrderDetails orderDetails);
-  event AddNewManager(address indexed manager);
+  event AddNewManager(address indexed managerAddress);
+  event RemoveManager(address indexed managerAddress);
   
   modifier onlyStoreManager(address _sender) {
-    require(storeManagers[_sender], "STORE: Not allowed!");
+    require(storeManagers[_sender], "Not allowed!");
     _;
   }
 
@@ -60,8 +61,20 @@ contract Store is Ownable {
 
   }
 
-  function addStoreManager(address _newManager) public onlyOwner {
+  /// @notice Adds new store manager.
+  /// @param _newManagerAddress New manager's address
+  function addStoreManager(address _newManagerAddress) public onlyOwner {
+    require(!storeManagers[_newManagerAddress], "Already added!");
+    storeManagers[_newManagerAddress] = true;
+    emit AddNewManager(_newManagerAddress);
+  }
 
+  /// @notice Removes store manager.
+  /// @param _managerAddress New manager's address
+  function removeStoreManager(address _managerAddress) public onlyOwner {
+    require(storeManagers[_managerAddress], "Not a manager!");
+    storeManagers[_managerAddress] = false;
+    emit RemoveManager(_managerAddress);
   }
 
   function withdraw() public onlyOwner {
