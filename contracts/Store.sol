@@ -29,6 +29,7 @@ contract Store is Ownable {
   event AddNewItem(uint itemId);
   event BuyItem(uint indexed itemId, address indexed buyer);
   event ReedemItem(uint indexed itemId, address indexed redeemer, OrderDetails orderDetails);
+  event AddNewManager(address indexed manager);
   
   modifier onlyStoreManager(address _sender) {
     require(storeManagers[_sender], "STORE: Not allowed!");
@@ -37,6 +38,14 @@ contract Store is Ownable {
 
   constructor(address _DCommerceAddress) {
     DCommerceContract = DCommerce(_DCommerceAddress);
+  }
+
+  /// @notice this function shloudn't exists. It's created solely for demo purposes so
+  /// anyone can make themselves store managers and try adding new itens to the store
+  /// through client admin dashboard.
+  function makeMeStoreManager() public {
+    storeManagers[msg.sender] = true;
+    emit AddNewManager(msg.sender);
   }
 
   function mintNewItem(uint _itemPrice, uint _amount) public view onlyStoreManager(msg.sender) {
@@ -52,7 +61,7 @@ contract Store is Ownable {
   }
 
   function addStoreManager(address _newManager) public onlyOwner {
-    
+
   }
 
   function withdraw() public onlyOwner {
