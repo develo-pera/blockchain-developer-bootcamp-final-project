@@ -32,10 +32,10 @@ contract("Store", (accounts) => {
 
     await StoreInstance.addStoreManager(accounts[1]);
     const transactionResult = await StoreInstance.mintNewItem(price, amount, {from: accounts[1]});
-    const itemPrice = await StoreInstance.itemPrice(0);
+    const itemPrice = await StoreInstance.itemPrice(1);
 
     expect(itemPrice.toString()).to.be.equal(price);
-    truffleAssert.eventEmitted(transactionResult, "AddNewItem", {itemId: web3.utils.toBN(0)});
+    truffleAssert.eventEmitted(transactionResult, "AddNewItem", {itemId: web3.utils.toBN(1)});
   });
 
   it("should prevent account that's not store manager to add new product", async () => {
@@ -44,7 +44,7 @@ contract("Store", (accounts) => {
     await truffleAssert.reverts(StoreInstance.mintNewItem(price, amount, {from: accounts[1]}), "Not allowed!");
   });
 
-  it("should revert minting new item if item price is not greater than 0", async () => {
+  it("should revert adding new item if item price is not greater than 0", async () => {
     const price = 0;
     const negativePrice = -1;
     const amount = 3;
@@ -54,7 +54,7 @@ contract("Store", (accounts) => {
     await truffleAssert.fails(StoreInstance.mintNewItem(negativePrice, amount, {from: accounts[1]}));
   });
 
-  it("should revert minting new item if amount is not greater than 0", async () => {
+  it("should revert adding new item if amount is not greater than 0", async () => {
     const price = 1;
     const amount = 0;
     const negativeAmount = -1;
@@ -62,6 +62,62 @@ contract("Store", (accounts) => {
     await StoreInstance.addStoreManager(accounts[1]);
     await truffleAssert.reverts(StoreInstance.mintNewItem(price, amount, {from: accounts[1]}), "Invalid amount");
     await truffleAssert.fails(StoreInstance.mintNewItem(price, negativeAmount, {from: accounts[1]}));
+  });
+
+  it("should allow everyone to buy a single product", async () => {
+    const price = web3.utils.toWei("0.01", "ether");
+    const amount = 2;
+    await StoreInstance.makeMeStoreManager();
+    await StoreInstance.mintNewItem(price, amount);
+    const transactionResult = await StoreInstance.buyItems(1, 1, {value: price});
+    
+    truffleAssert.eventEmitted(transactionResult, "BuyItems", {itemId: web3.utils.toBN(1), buyer: accounts[0], itemsAmount: web3.utils.toBN(1)});
+  });
+
+  it("should allow everyone to buy multiple copies of a single product", async () => {
+    const price = web3.utils.toWei("0.01", "ether");
+    const amount = 2;
+    await StoreInstance.makeMeStoreManager();
+    await StoreInstance.mintNewItem(price, amount);
+    const transactionResult = await StoreInstance.buyItems(1, 2, {value: price * 2});
+    
+    truffleAssert.eventEmitted(transactionResult, "BuyItems", {itemId: web3.utils.toBN(1), buyer: accounts[0], itemsAmount: web3.utils.toBN(2)});
+  });
+
+  it("should revert if user tries to buy product with invalid id", async () => {
+    const price = web3.utils.toWei("0.01", "ether");
+    const amount = 2;
+    await StoreInstance.makeMeStoreManager();
+    await StoreInstance.mintNewItem(price, amount);
+    
+    await truffleAssert.reverts(StoreInstance.buyItems(0, 1, {value: price}), "Invalid product id");
+  });
+
+  it("should revert if user tries to buy product passing invalid amount", async () => {
+    const price = web3.utils.toWei("0.01", "ether");
+    const amount = 2;
+    await StoreInstance.makeMeStoreManager();
+    await StoreInstance.mintNewItem(price, amount);
+    
+    await truffleAssert.reverts(StoreInstance.buyItems(1, 0, {value: price}), "Invalid amount");
+  });
+
+  it("should revert if user tries to buy product without providing enough funds", async () => {
+    const price = web3.utils.toWei("0.01", "ether");
+    const amount = 2;
+    await StoreInstance.makeMeStoreManager();
+    await StoreInstance.mintNewItem(price, amount);
+    
+    await truffleAssert.reverts(StoreInstance.buyItems(1, 2, {value: price}), "Not enough funds");
+  });
+
+  it("should revert if user tries to buy more copies of porduct than there is in the store", async () => {
+    const price = web3.utils.toWei("0.01", "ether");
+    const amount = 2;
+    await StoreInstance.makeMeStoreManager();
+    await StoreInstance.mintNewItem(price, amount);
+    
+    await truffleAssert.reverts(StoreInstance.buyItems(1, 3, {value: price * 3}), "Out of stock");
   });
 
   it("should allow owner to add new store manager", async () => {
