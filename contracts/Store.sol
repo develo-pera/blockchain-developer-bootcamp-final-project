@@ -2,16 +2,17 @@
 pragma solidity 0.8.10;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC1155/utils/ERC1155Holder.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "./Dcommerce.sol";
 
-contract Store is Ownable {
+contract Store is Ownable, ERC1155Holder {
   using Counters for Counters.Counter;
 
   DCommerce private DCommerceContract;
   Counters.Counter internal itemIdTracker;
 
-  mapping(uint => uint) private itemPrice;
+  mapping(uint => uint) public itemPrice;
   mapping(address => bool) private storeManagers;
 
   struct ShippingAddress {
@@ -41,16 +42,29 @@ contract Store is Ownable {
     DCommerceContract = DCommerce(_DCommerceAddress);
   }
 
-  /// @notice this function shloudn't exists. It's created solely for demo purposes so
+  /// @notice This function shloudn't exists. It's created solely for demo purposes so
   /// anyone can make themselves store managers and try adding new itens to the store
   /// through client admin dashboard.
   function makeMeStoreManager() public {
     storeManagers[msg.sender] = true;
+  
     emit AddNewManager(msg.sender);
   }
 
-  function mintNewItem(uint _itemPrice, uint _amount) public view onlyStoreManager(msg.sender) {
+  /// @notice Creates new product.
+  /// @param _itemPrice Product price in wei.
+  /// @param _amount Number of copies available for sale.
+  function mintNewItem(uint _itemPrice, uint _amount) public onlyStoreManager(msg.sender) {
+    require(_itemPrice > 0, "Invalid item price");
+    require(_amount > 0, "Invalid amount");
 
+    uint itemId = itemIdTracker.current();
+    itemIdTracker.increment();
+
+    itemPrice[itemId] = _itemPrice;
+    DCommerceContract.mint(address(this), itemId, _amount, "");
+
+    emit AddNewItem(itemId);
   }
 
   function buyItem(uint _tokenId) public payable {
@@ -58,14 +72,16 @@ contract Store is Ownable {
   }
 
   function reedemItem(uint _tokenId, OrderDetails memory _orderDetails) public payable {
-
+    
   }
 
   /// @notice Adds new store manager.
   /// @param _newManagerAddress New manager's address.
   function addStoreManager(address _newManagerAddress) public onlyOwner {
     require(!storeManagers[_newManagerAddress], "Already added!");
+
     storeManagers[_newManagerAddress] = true;
+
     emit AddNewManager(_newManagerAddress);
   }
 
@@ -73,7 +89,9 @@ contract Store is Ownable {
   /// @param _managerAddress New manager's address.
   function removeStoreManager(address _managerAddress) public onlyOwner {
     require(storeManagers[_managerAddress], "Not a manager!");
+
     storeManagers[_managerAddress] = false;
+    
     emit RemoveManager(_managerAddress);
   }
 

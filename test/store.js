@@ -12,6 +12,9 @@ contract("Store", (accounts) => {
 
   beforeEach(async () => {
     StoreInstance = await Store.new(DCommerce.address);
+    const DCommerceInstance = await DCommerce.deployed();
+    const minterRole = web3.utils.keccak256("MINTER_ROLE");
+    await DCommerceInstance.grantRole(minterRole, StoreInstance.address);
   });
 
   it("should make me store manager on makeMeStoreManager call", async () => {
@@ -21,6 +24,44 @@ contract("Store", (accounts) => {
     
     expect(before).to.be.false;
     expect(after).to.be.true;
+  });
+
+  it("should allow store manager to add new product", async () => {
+    const price = web3.utils.toWei("0.01", "ether");
+    const amount = 3;
+
+    await StoreInstance.addStoreManager(accounts[1]);
+    const transactionResult = await StoreInstance.mintNewItem(price, amount, {from: accounts[1]});
+    const itemPrice = await StoreInstance.itemPrice(0);
+
+    expect(itemPrice.toString()).to.be.equal(price);
+    truffleAssert.eventEmitted(transactionResult, "AddNewItem", {itemId: web3.utils.toBN(0)});
+  });
+
+  it("should prevent account that's not store manager to add new product", async () => {
+    const price = web3.utils.toWei("0.01", "ether");
+    const amount = 3;
+    await truffleAssert.reverts(StoreInstance.mintNewItem(price, amount, {from: accounts[1]}), "Not allowed!");
+  });
+
+  it("should revert minting new item if item price is not greater than 0", async () => {
+    const price = 0;
+    const negativePrice = -1;
+    const amount = 3;
+
+    await StoreInstance.addStoreManager(accounts[1]);
+    await truffleAssert.reverts(StoreInstance.mintNewItem(price, amount, {from: accounts[1]}), "Invalid item price");
+    await truffleAssert.fails(StoreInstance.mintNewItem(negativePrice, amount, {from: accounts[1]}));
+  });
+
+  it("should revert minting new item if amount is not greater than 0", async () => {
+    const price = 1;
+    const amount = 0;
+    const negativeAmount = -1;
+
+    await StoreInstance.addStoreManager(accounts[1]);
+    await truffleAssert.reverts(StoreInstance.mintNewItem(price, amount, {from: accounts[1]}), "Invalid amount");
+    await truffleAssert.fails(StoreInstance.mintNewItem(price, negativeAmount, {from: accounts[1]}));
   });
 
   it("should allow owner to add new store manager", async () => {
