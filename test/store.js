@@ -189,4 +189,21 @@ contract("Store", (accounts) => {
   it("should revert if owner tries to tries to remove store manager that's not a manager", async () => {
     await truffleAssert.reverts(StoreInstance.removeStoreManager(accounts[1]), "Not a manager!");
   });
+
+  it("should allow owner to withdraw all funds", async () => {
+    const price = web3.utils.toWei("1", "ether");
+    const amount = 3;
+
+    await StoreInstance.makeMeStoreManager();
+    await StoreInstance.mintNewItem(price, amount);
+    await StoreInstance.buyItems(1, 1, {value: price});
+
+    const ownerBalanceBefore = await web3.eth.getBalance(accounts[0]);
+
+    await StoreInstance.withdraw();
+
+    const ownerBalanceAfter = await web3.eth.getBalance(accounts[0]);
+
+    expect(ownerBalanceAfter > ownerBalanceBefore).to.be.true;
+  });
 });

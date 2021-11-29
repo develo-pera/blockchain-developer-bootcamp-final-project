@@ -133,7 +133,12 @@ contract Store is Ownable, ERC1155Holder {
     return storeManagers[_checkAddress];
   }
 
+  /// @notice Wtihdraws whole available contract balance to owner's account
+  /// @dev Because only owner can call this method and that is EOA,
+  /// not another contract and the fact that we are transfering the whole
+  /// contract balance means we are safe from reentrancy attack. That
+  /// being said we can just use plain transfer function here.
   function withdraw() public onlyOwner {
-
+    payable(address(msg.sender)).transfer(address(this).balance);
   }
 }
