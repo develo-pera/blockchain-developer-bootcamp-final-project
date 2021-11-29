@@ -93,8 +93,17 @@ contract Store is Ownable, ERC1155Holder {
     emit BuyItems(_tokenId, msg.sender, _amount);
   }
 
-  function reedemItem(uint _tokenId, OrderDetails memory _orderDetails) public payable {
-    
+  /// @notice Burns the token and emits event with shipping details for the item.
+  /// For now we only accept reedeming a single copy of the single item. In the future
+  /// we should enable reedimng multiple copies of multiple products in one transaction.
+  /// @dev before calling this msg.senders should allow Store contract to manage their
+  /// tokens by callind approveForAll on DCommerce contract.
+  /// @param _tokenId Product ID to reedem.
+  /// @param _orderDetails Product SKU and shipping address.
+  function reedemItem(uint _tokenId, OrderDetails memory _orderDetails) public validItemId(_tokenId) {  
+    DCommerceContract.burn(msg.sender, _tokenId, 1);
+
+    emit ReedemItem(_tokenId, msg.sender, _orderDetails);
   }
 
   /// @notice Adds new store manager.

@@ -9,18 +9,20 @@ const DCommerce = artifacts.require("DCommerce");
  */
 contract("Store", (accounts) => {
   let StoreInstance;
+  let DCommerceInstance;
 
   beforeEach(async () => {
-    StoreInstance = await Store.new(DCommerce.address);
-    const DCommerceInstance = await DCommerce.deployed();
+    DCommerceInstance = await DCommerce.new("testurl.com/");
+    StoreInstance = await Store.new(DCommerceInstance.address);
+    await StoreInstance.makeMeStoreManager();
     const minterRole = web3.utils.keccak256("MINTER_ROLE");
     await DCommerceInstance.grantRole(minterRole, StoreInstance.address);
   });
 
   it("should make me store manager on makeMeStoreManager call", async () => {
-    const before = await StoreInstance.isStoreManager(accounts[0]);
-    await StoreInstance.makeMeStoreManager();
-    const after = await StoreInstance.isStoreManager(accounts[0]);
+    const before = await StoreInstance.isStoreManager(accounts[1]);
+    await StoreInstance.makeMeStoreManager({from: accounts[1]});
+    const after = await StoreInstance.isStoreManager(accounts[1]);
     
     expect(before).to.be.false;
     expect(after).to.be.true;
@@ -118,6 +120,37 @@ contract("Store", (accounts) => {
     await StoreInstance.mintNewItem(price, amount);
     
     await truffleAssert.reverts(StoreInstance.buyItems(1, 3, {value: price * 3}), "Out of stock");
+  });
+
+  it("should allow token owner to reedem the product", async () => {
+    const price = web3.utils.toWei("0.01", "ether");
+    const amount = 2;
+    await StoreInstance.makeMeStoreManager();
+    await StoreInstance.mintNewItem(price, amount);
+    await StoreInstance.buyItems(1, 1, {value: price});
+
+    const orderDetails = {
+      sku: "abc123",
+      shippingAddress: {
+        street: "Street",
+        city: "City",
+        zipCode: "Zip code",
+        country: "Country",
+      }
+    }
+
+    DCommerceInstance.setApprovalForAll(StoreInstance.address, true, {from: accounts[0]});
+
+    const balanceBefore = await DCommerceInstance.balanceOf(accounts[0], 1);
+    const transactionResult = await StoreInstance.reedemItem(1, orderDetails);
+    const balanceAfter = await DCommerceInstance.balanceOf(accounts[0], 1);
+
+    expect(balanceBefore.toNumber()).to.be.equal(1);
+    expect(balanceAfter.toNumber()).to.be.equal(0);
+
+    // TODO: Testing orderDeatils struct was real pain in the ass,
+    // leaving for now and just testing if event was emited or not
+    truffleAssert.eventEmitted(transactionResult, "ReedemItem");
   });
 
   it("should allow owner to add new store manager", async () => {
