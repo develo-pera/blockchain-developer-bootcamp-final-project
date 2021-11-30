@@ -3,7 +3,7 @@ import { Web3ReactProvider } from "@web3-react/core";
 import { ethers } from "ethers";
 import { Route } from "react-router-dom";
 import "./styles/App.scss";
-import Layout from "./layouts/layout";
+import Layout from "./layouts/Layout";
 import Home from "./pages/Home/Home";
 import Admin from "./pages/Admin/Admin";
 

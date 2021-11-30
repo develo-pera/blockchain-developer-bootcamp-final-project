@@ -3,11 +3,11 @@ import NavigationControls from "../NavigationControls/NavigationControls";
 
 import styles from "./Header.modules.scss";
 
-const Header = () => {
+const Header = ({ metamaskLoading }) => {
   return (
     <nav className={styles.navigation}>
       <p className={styles.logo}>dCommerce Store</p>
-      <NavigationControls />
+      {!metamaskLoading && <NavigationControls />}
     </nav>
   );
 };
