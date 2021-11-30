@@ -8,9 +8,7 @@ import { shortenAddress } from "../../utils/shortenAddress";
 import styles from "./NavigationControls.module.scss";
 
 const NavigationControls = () => {
-  const { activate, active, account, deactivate } = useWeb3React();
-
-  console.log({ activate, active, account, deactivate });
+  const { activate, active, account } = useWeb3React();
 
   if (active) {
     return (

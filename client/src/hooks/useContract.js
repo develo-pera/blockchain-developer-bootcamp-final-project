@@ -13,6 +13,8 @@ export function useContract(contractAddress, ABI) {
   const signerOrProvider = account ? library.getSigner(account).connectUnchecked() : library;
 
   return useMemo(() => {
+    if (!contractAddress) return null;
+
     return new Contract(contractAddress, ABI, signerOrProvider);
   }, [contractAddress, ABI, signerOrProvider]);
 }
