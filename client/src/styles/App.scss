@@ -10,9 +10,18 @@ html, body {
 }
 
 button {
-  background-color: #000;
+  background-color: #242424;
   color: #fff;
   border: none;
   padding: 10px 20px;
   cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+  color: #242424;
+
+  &:hover {
+    color: #48636f;
+  }
 }

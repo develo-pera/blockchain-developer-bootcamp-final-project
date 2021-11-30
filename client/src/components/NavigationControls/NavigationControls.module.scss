@@ -1,8 +1,22 @@
 .controls {
   display: grid;
-  grid-template-columns: repeat(2, auto);
+  grid-template-columns: repeat(3, auto);
   grid-column-gap: 20px;
   align-items: center;
+  font-size: 14px;
+}
+
+.userProfile {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  grid-column-gap: 12px;
+  align-items: center;
+  margin-left: 30px;
+}
+
+.username {
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .connectButton {
