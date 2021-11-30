@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Header from "../components/Header";
+import Header from "../components/Header/Header";
 import { injected } from "../connectors";
 import { UnsupportedChainIdError, useWeb3React } from "@web3-react/core";
 import UnsupportedNetwork from "../components/UnsupportedNetwork/UnsupportedNetwork";

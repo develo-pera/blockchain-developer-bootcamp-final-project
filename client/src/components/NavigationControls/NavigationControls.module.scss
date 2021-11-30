@@ -1,0 +1,16 @@
+.controls {
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  grid-column-gap: 20px;
+  align-items: center;
+}
+
+.connectButton {
+  display: flex;
+  align-items: center;
+}
+
+.metamaskLogo {
+  width: 20px;
+  margin-right: 10px;
+}
