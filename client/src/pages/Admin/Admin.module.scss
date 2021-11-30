@@ -4,6 +4,13 @@
   padding: 20px;
 }
 
+.wrapperFlex {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .containerNonManager {
   max-width: 600px;
   text-align: center;
