@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
+import { toast } from "react-toastify";
 
 import styles from "./Admin.module.scss";
 import { useContract } from "../../hooks/useContract";
@@ -31,7 +32,9 @@ const Admin = () => {
       await transaction.wait(1);
       setWaitingForMakeMeManagerTransaction(false);
     } catch (e) {
-      console.log(e);
+      toast.error(e.message, {
+        position: "bottom-right",
+      });
     }
   };
 

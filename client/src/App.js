@@ -6,6 +6,8 @@ import "./styles/App.scss";
 import Layout from "./layouts/Layout";
 import Home from "./pages/Home/Home";
 import Admin from "./pages/Admin/Admin";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function getLibrary(provider) {
   return new ethers.providers.Web3Provider(provider);
@@ -18,6 +20,7 @@ const App = () => {
         <Route exact path="/" component={Home} />
         <Route path="/admin" component={Admin} />
       </Layout>
+      <ToastContainer />
     </Web3ReactProvider>
   );
 };
