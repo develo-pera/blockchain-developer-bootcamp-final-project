@@ -16,8 +16,42 @@ In the simplest way, a platform like that should work like this:
 
 ### Demo: https://dcommerce-nft.netlify.app/
 
-##Directory structure
+## Directory structure
 - `client`: Project's React frontend.
 - `contracts`: Solidity smart contracts.
 - `migrations`: Migration files for deploying contracts in contracts directory.
 - `test`: Tests for smart contracts.
+
+## Running project locally:
+
+Prerequisites:
+- Node: v16.7.0
+- NPM v7.20.3
+- Yarn 1.22.11 (this is important as client will only work with Yarn and not NPM due to bug in resolving peer dependencies of project libraries and packets)
+- Ganache
+
+1. Steps to run project locally:
+
+    - Clone this repo
+    - cd into folder
+    - Create `.env` file based on `.env.example`
+
+2. Creating Fleek account and copy credentials:
+
+    - Go to https://fleek.co/ and create account or sign in if you already have an account
+    - Go to storage page, copy link to the bucket (link should look something like `storageapi.fleek.co/your-team-bucket/`) and paste as a value for `RAZZLE_DCOMMERCE_BASE_URL` in `.env` file
+    - Now go to Settings page and under Storage API click on Generate API button, copy API key and API Secret and paste to `RAZZLE_FLEEK_API_KEY` and `RAZZLE_FLEEK_API_SECRET` in `.env` file
+
+3. Installing dependencies and running smart contracts:
+
+    - Make sure you are in root folder of the project and run `npm install`
+    - Run Ganache or ganache-cli on `port 9545` and with `chainId 1337`
+    - In your terminal run `truffle migrate --network development`
+    
+4. Installing dependencies and running client:
+
+    - cd into `client` folder
+    - Run `yarn install`
+    - Run `yarn start`
+    - Open `http://localhost:3000`
+    - Don't forget to add a network to your Metamask with correct RPC URL and ChainId (`http://127.0.0.1:9545` and `1337`) before trying to interact with smart contracts from the frontend
