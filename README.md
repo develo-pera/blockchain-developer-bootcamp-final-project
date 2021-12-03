@@ -27,7 +27,7 @@ In the simplest way, a platform like that should work like this:
 Prerequisites:
 - Node: v16.7.0
 - NPM v7.20.3
-- Yarn 1.22.11 (this is important as client will only work with Yarn and not NPM due to bug in resolving peer dependencies of project libraries and packets)
+- Yarn 1.22.11 **(this is important as client will only work with Yarn and not NPM due to bug in resolving peer dependencies of project libraries and packets)**
 - Ganache
 
 1. Steps to run project locally:
@@ -51,7 +51,7 @@ Prerequisites:
 4. Installing dependencies and running client:
 
     - cd into `client` folder
-    - Run `yarn install`
+    - Run `yarn install` **(must be Yarn, not NPM)**
     - Run `yarn start`
     - Open `http://localhost:3000`
     - Don't forget to add a network to your Metamask with correct RPC URL and ChainId (`http://127.0.0.1:9545` and `1337`) before trying to interact with smart contracts from the frontend
