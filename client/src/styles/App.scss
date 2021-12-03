@@ -26,3 +26,16 @@ a {
     color: #48636f;
   }
 }
+
+input {
+  width: 100%;
+  border: 1px solid #242424;
+  border-radius: 0;
+  outline: none;
+  padding: 10px;
+}
+
+input[type="file"] {
+  border: none;
+  padding: 10px 0px;
+}

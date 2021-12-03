@@ -10,6 +10,7 @@
     "@ethersproject/constants": "^5.5.0",
     "@ethersproject/contracts": "^5.5.0",
     "@ethersproject/units": "^5.5.0",
+    "@fleekhq/fleek-storage-js": "^1.0.20",
     "@web3-react/core": "^6.1.9",
     "@web3-react/injected-connector": "^6.0.7",
     "boring-avatars": "^1.5.8",

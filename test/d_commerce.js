@@ -15,7 +15,7 @@ contract("DCommerce", (/* accounts */) => {
   it("should return OpenSea friendly url for each token", async () => {
     const tokenId = 1;
     const tokenUrl = await DCommerceInstance.uri(tokenId);
-    
-    expect(tokenUrl).to.be.equal(`${process.env.BASE_URL}/${tokenId}.json`);
+
+    expect(tokenUrl).to.be.equal(`${process.env.RAZZLE_DCOMMERCE_BASE_URL}/${tokenId}.json`);
   });
 });

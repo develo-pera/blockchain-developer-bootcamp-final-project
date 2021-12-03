@@ -1,7 +1,8 @@
 .container {
-  max-width: 1200px;
+  max-width: 450px;
   margin: 0 auto;
   padding: 20px;
+  width: 100%;
 }
 
 .wrapperFlex {
@@ -26,4 +27,21 @@
 
 .makeMeManagerButton {
   margin-top: 30px;
+}
+
+.title {
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.label {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.submitButton {
+  margin-top: 30px;
+  width: 100%;
 }

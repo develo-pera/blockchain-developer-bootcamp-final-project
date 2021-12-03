@@ -3,7 +3,7 @@ const Store = artifacts.require("Store");
 
 module.exports = async (_deployer) => {
   // Use deployer to state migration tasks.
-  await _deployer.deploy(DCommerce, process.env.BASE_URL);
+  await _deployer.deploy(DCommerce, process.env.RAZZLE_DCOMMERCE_BASE_URL);
   const DCommerceInstance = await DCommerce.deployed();
 
   await _deployer.deploy(Store, DCommerceInstance.address);
