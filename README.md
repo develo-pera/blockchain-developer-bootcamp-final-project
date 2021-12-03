@@ -11,3 +11,5 @@ In the simplest way, a platform like that should work like this:
 3. Owners can then resell those NFTs on any other popular NFT marketplace if they want.
 4. On product page you can check details of every token like owners, price, etc. by visiting something like `somebrand.com/store/{tokenId}`
 5. Once a NFT owner wants to redeem the physical good NFT represents, they have to go to the brands website and burn the token. *(For simplicity and for now in order to reedem we will ask users to burn the NFTs. In production ready version users can redeem without burning, we keep the track of each individual item and just change flag to `reedemed` to true.)*
+
+### Demo: https://dcommerce-nft.netlify.app/
