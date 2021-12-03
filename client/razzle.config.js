@@ -9,7 +9,7 @@ module.exports = {
   modifyWebpackConfig(opts) {
     const config = opts.webpackConfig;
 
-    if (dev) {
+    if (opts.env.dev) {
       const env = dotenv.config({ path: "../.env" }).parsed;
 
       // reduce it to a nice object, the same as before
@@ -20,7 +20,7 @@ module.exports = {
 
       config.plugins = [...config.plugins, new webpack.DefinePlugin(envKeys)];
     }
-    
+
     // Ignore fs dependencies so we can use winston
     // if (opts.env.target === 'node' && !opts.env.dev) {
     config.node = { fs: "empty" };
