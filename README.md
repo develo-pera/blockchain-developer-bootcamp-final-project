@@ -55,3 +55,9 @@ Prerequisites:
     - Run `yarn start`
     - Open `http://localhost:3000`
     - Don't forget to add a network to your Metamask with correct RPC URL and ChainId (`http://127.0.0.1:9545` and `1337`) before trying to interact with smart contracts from the frontend
+
+### Running Smart Contract tests:
+
+- Run `npm i` from the project root in case you haven't already
+- Run `truffle develop`
+- Run `test` command in truffle develop console
