@@ -52,6 +52,7 @@ Prerequisites:
 
     - cd into `client` folder
     - Run `yarn install` **(must be Yarn, not NPM)**
+    - Get address of a Store contract from your local Ganache blockchain and paste it to `client/src/statis/Store.js` file as a `[ChainId.Localhost]` property
     - Run `yarn start`
     - Open `http://localhost:3000`
     - Don't forget to add a network to your Metamask with correct RPC URL and ChainId (`http://127.0.0.1:9545` and `1337`) before trying to interact with smart contracts from the frontend
