@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/5727d436-d08c-4893-a370-bab1e1841cca/deploy-status)](https://app.netlify.com/sites/dcommerce-nft/deploys)
+
 Public Ethereum account for NFT certificate: `0xE0fF737685fdE7Fd0933Fc280D53978b3d0700D5`
 
 # dCommerce: decentralized e-commerce store with redeemable NFTs
