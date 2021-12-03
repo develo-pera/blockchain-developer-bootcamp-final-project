@@ -23,7 +23,7 @@ contract("Store", (accounts) => {
     const before = await StoreInstance.isStoreManager(accounts[1]);
     await StoreInstance.makeMeStoreManager({from: accounts[1]});
     const after = await StoreInstance.isStoreManager(accounts[1]);
-    
+
     expect(before).to.be.false;
     expect(after).to.be.true;
   });
@@ -72,7 +72,7 @@ contract("Store", (accounts) => {
     await StoreInstance.makeMeStoreManager();
     await StoreInstance.mintNewItem(price, amount);
     const transactionResult = await StoreInstance.buyItems(1, 1, {value: price});
-    
+
     truffleAssert.eventEmitted(transactionResult, "BuyItems", {itemId: web3.utils.toBN(1), buyer: accounts[0], itemsAmount: web3.utils.toBN(1)});
   });
 
@@ -82,7 +82,7 @@ contract("Store", (accounts) => {
     await StoreInstance.makeMeStoreManager();
     await StoreInstance.mintNewItem(price, amount);
     const transactionResult = await StoreInstance.buyItems(1, 2, {value: price * 2});
-    
+
     truffleAssert.eventEmitted(transactionResult, "BuyItems", {itemId: web3.utils.toBN(1), buyer: accounts[0], itemsAmount: web3.utils.toBN(2)});
   });
 
@@ -91,7 +91,7 @@ contract("Store", (accounts) => {
     const amount = 2;
     await StoreInstance.makeMeStoreManager();
     await StoreInstance.mintNewItem(price, amount);
-    
+
     await truffleAssert.reverts(StoreInstance.buyItems(0, 1, {value: price}), "Invalid product id");
   });
 
@@ -100,7 +100,7 @@ contract("Store", (accounts) => {
     const amount = 2;
     await StoreInstance.makeMeStoreManager();
     await StoreInstance.mintNewItem(price, amount);
-    
+
     await truffleAssert.reverts(StoreInstance.buyItems(1, 0, {value: price}), "Invalid amount");
   });
 
@@ -109,7 +109,7 @@ contract("Store", (accounts) => {
     const amount = 2;
     await StoreInstance.makeMeStoreManager();
     await StoreInstance.mintNewItem(price, amount);
-    
+
     await truffleAssert.reverts(StoreInstance.buyItems(1, 2, {value: price}), "Not enough funds");
   });
 
@@ -118,7 +118,7 @@ contract("Store", (accounts) => {
     const amount = 2;
     await StoreInstance.makeMeStoreManager();
     await StoreInstance.mintNewItem(price, amount);
-    
+
     await truffleAssert.reverts(StoreInstance.buyItems(1, 3, {value: price * 3}), "Out of stock");
   });
 
@@ -157,7 +157,7 @@ contract("Store", (accounts) => {
     const before = await StoreInstance.isStoreManager(accounts[1]);
     await StoreInstance.addStoreManager(accounts[1]);
     const after = await StoreInstance.isStoreManager(accounts[1]);
-    
+
     expect(before).to.be.false;
     expect(after).to.be.true;
   });
@@ -176,7 +176,7 @@ contract("Store", (accounts) => {
     const before = await StoreInstance.isStoreManager(accounts[1]);
     await StoreInstance.removeStoreManager(accounts[1]);
     const after = await StoreInstance.isStoreManager(accounts[1]);
-    
+
     expect(before).to.be.true;
     expect(after).to.be.false;
   });
@@ -189,6 +189,11 @@ contract("Store", (accounts) => {
   it("should revert if owner tries to tries to remove store manager that's not a manager", async () => {
     await truffleAssert.reverts(StoreInstance.removeStoreManager(accounts[1]), "Not a manager!");
   });
+
+  it("should return correct next item id", async () => {
+    const nextItemId = await StoreInstance.getNewItemId();
+    expect(nextItemId.toNumber()).to.be.eq(1);
+  })
 
   it("should allow owner to withdraw all funds", async () => {
     const price = web3.utils.toWei("1", "ether");

@@ -34,7 +34,7 @@ contract Store is Ownable, ERC1155Holder {
   event ReedemItem(uint indexed itemId, address indexed redeemer, OrderDetails orderDetails);
   event AddNewManager(address indexed managerAddress);
   event RemoveManager(address indexed managerAddress);
-  
+
   modifier onlyStoreManager(address _sender) {
     require(storeManagers[_sender], "Not allowed!");
     _;
@@ -54,7 +54,7 @@ contract Store is Ownable, ERC1155Holder {
   /// through client admin dashboard.
   function makeMeStoreManager() public {
     storeManagers[msg.sender] = true;
-  
+
     emit AddNewManager(msg.sender);
   }
 
@@ -84,12 +84,12 @@ contract Store is Ownable, ERC1155Holder {
   function buyItems(uint _tokenId, uint _amount) public payable validItemId(_tokenId) {
     require(_amount > 0, "Invalid amount");
     require(msg.value >= itemPrice[_tokenId] * _amount, "Not enough funds");
-  
+
     uint availableItems = DCommerceContract.balanceOf(address(this), _tokenId);
     require(availableItems >= _amount, "Out of stock");
 
     DCommerceContract.safeTransferFrom(address(this), msg.sender, _tokenId, _amount, "");
-    
+
     emit BuyItems(_tokenId, msg.sender, _amount);
   }
 
@@ -100,7 +100,7 @@ contract Store is Ownable, ERC1155Holder {
   /// tokens by callind approveForAll on DCommerce contract.
   /// @param _tokenId Product ID to reedem.
   /// @param _orderDetails Product SKU and shipping address.
-  function reedemItem(uint _tokenId, OrderDetails memory _orderDetails) public validItemId(_tokenId) {  
+  function reedemItem(uint _tokenId, OrderDetails memory _orderDetails) public validItemId(_tokenId) {
     DCommerceContract.burn(msg.sender, _tokenId, 1);
 
     emit ReedemItem(_tokenId, msg.sender, _orderDetails);
@@ -122,15 +122,22 @@ contract Store is Ownable, ERC1155Holder {
     require(storeManagers[_managerAddress], "Not a manager!");
 
     storeManagers[_managerAddress] = false;
-    
+
     emit RemoveManager(_managerAddress);
   }
 
-  /// @notice Checks if given address is store manager.  
+  /// @notice Checks if given address is store manager.
   /// @param _checkAddress Address to check.
   /// @return boolean
   function isStoreManager(address _checkAddress) public view returns(bool) {
     return storeManagers[_checkAddress];
+  }
+
+  /// @notice Returns id for the next item that is yet to be created
+  /// @dev We need this to construct correct metadata and url for frontend on client
+  /// @return uint
+  function getNewItemId() public view returns(uint) {
+    return itemIdTracker.current() + 1;
   }
 
   /// @notice Wtihdraws whole available contract balance to owner's account
