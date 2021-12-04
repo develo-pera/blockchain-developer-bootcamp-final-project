@@ -2,22 +2,26 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useWeb3React } from "@web3-react/core";
 import { toast } from "react-toastify";
 import fleekStorage from "@fleekhq/fleek-storage-js";
+import { ethers } from "ethers";
 
 import styles from "./Admin.module.scss";
 import { useContract } from "../../hooks/useContract";
 import { StoreContract } from "../../static/contracts/StoreContract";
 
 const Admin = () => {
-  const { account, chainId } = useWeb3React();
-  const [isPageLoading, setIsPageLoading] = useState(true);
-  const [isStoreManager, setIsStoreManager] = useState(false);
-  const [productImage, setProductImage] = useState();
-  const [formData, setFormData] = useState({
+  const INITIAL_FORM_DATA = {
     name: null,
     description: null,
     price: null,
     stock: null,
-  });
+  };
+
+  const { account, chainId } = useWeb3React();
+  const [isPageLoading, setIsPageLoading] = useState(true);
+  const [isStoreManager, setIsStoreManager] = useState(false);
+  const [productImage, setProductImage] = useState();
+  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
+  const [mintingProductStatus, setMintingProductStatus] = useState("");
   const [waitingForMakeMeManagerTransaction, setWaitingForMakeMeManagerTransaction] = useState(false);
   const StoreContractInstance = useContract(StoreContract.address[chainId], StoreContract.abi);
 
@@ -89,50 +93,65 @@ const Admin = () => {
     let nonValid = false;
     Object.keys(formData).forEach((key) => {
       if (!formData[key]) {
-        toast.error(`${key} cannot be empty`);
+        toast.error(`${key} cannot be empty`, {position: "bottom-right"});
         nonValid = true;
       }
     });
     if (!productImage) {
-      toast.error(`product image cannot be empty`);
+      toast.error(`product image cannot be empty`, {position: "bottom-right"});
       nonValid = true;
     }
     if (nonValid) return;
 
-    const nextStoreProductId = await StoreContractInstance.getNewItemId();
-    const productId = nextStoreProductId.toString();
+    try {
+      setMintingProductStatus("Uploading metadata...");
 
-    const productImageArrayBuffer = await productImage.arrayBuffer();
-    const productImageUint8Array = new Uint8Array(productImageArrayBuffer);
+      const nextStoreProductId = await StoreContractInstance.getNewItemId();
+      const productId = nextStoreProductId.toString();
 
-    const uploadedFile = await fleekStorage.upload({
-      apiKey: process.env.RAZZLE_FLEEK_API_KEY,
-      apiSecret: process.env.RAZZLE_FLEEK_API_SECRET,
-      key: `${productId}.jpg`,
-      data: productImageUint8Array,
-      httpUploadProgressCallback: (event) => {
-        console.log(Math.round((event.loaded / event.total) * 100) + "% done");
-      },
-    });
+      const productImageArrayBuffer = await productImage.arrayBuffer();
+      const productImageUint8Array = new Uint8Array(productImageArrayBuffer);
 
-    const productMetadata = JSON.stringify({
-      name: formData.name,
-      description: formData.description,
-      stock: formData.stock,
-      image: uploadedFile.publicUrl,
-    });
+      const uploadedFile = await fleekStorage.upload({
+        apiKey: process.env.RAZZLE_FLEEK_API_KEY,
+        apiSecret: process.env.RAZZLE_FLEEK_API_SECRET,
+        key: `${productId}.jpg`,
+        data: productImageUint8Array,
+        httpUploadProgressCallback: (event) => {
+          console.log(Math.round((event.loaded / event.total) * 100) + "% done");
+        },
+      });
 
-    const uploadedMetadata = await fleekStorage.upload({
-      apiKey: process.env.RAZZLE_FLEEK_API_KEY,
-      apiSecret: process.env.RAZZLE_FLEEK_API_SECRET,
-      key: `${productId}.json`,
-      data: productMetadata,
-      httpUploadProgressCallback: (event) => {
-        console.log(Math.round((event.loaded / event.total) * 100) + "% done");
-      },
-    });
+      const productMetadata = JSON.stringify({
+        name: formData.name,
+        description: formData.description,
+        stock: formData.stock,
+        image: uploadedFile.publicUrl,
+      });
 
-    console.log(uploadedMetadata);
+      await fleekStorage.upload({
+        apiKey: process.env.RAZZLE_FLEEK_API_KEY,
+        apiSecret: process.env.RAZZLE_FLEEK_API_SECRET,
+        key: `${productId}.json`,
+        data: productMetadata,
+        httpUploadProgressCallback: (event) => {
+          console.log(Math.round((event.loaded / event.total) * 100) + "% done");
+        },
+      });
+
+      setMintingProductStatus("Minting product...");
+      const priceInWei = ethers.utils.parseUnits(formData.price.toString());
+      const amount = ethers.BigNumber.from(formData.stock);
+      const transaction = await StoreContractInstance.mintNewItem(priceInWei, amount);
+      await transaction.wait(1);
+
+      setMintingProductStatus("");
+      setFormData(INITIAL_FORM_DATA);
+      toast.success("New product minted successfully", {position: "bottom-right"});
+    } catch (e) {
+      setMintingProductStatus("");
+      toast.error(e.message, {position: "bottom-right"})
+    }
   };
 
   return (
@@ -148,8 +167,8 @@ const Admin = () => {
       <input type="number" min={0} value={formData["price"]} onChange={(e) => handleFormChange(e, "price")} />
       <p className={styles.label}>Stock</p>
       <input type="number" min={0} value={formData["stock"]} onChange={(e) => handleFormChange(e, "stock")} />
-      <button onClick={handleSubmit} className={styles.submitButton}>
-        Submit
+      <button disabled={mintingProductStatus} onClick={handleSubmit} className={styles.submitButton}>
+        {mintingProductStatus || "Submit"}
       </button>
     </div>
   );
