@@ -99,14 +99,16 @@ const Admin = () => {
     }
     if (nonValid) return;
 
+    const nextStoreProductId = await StoreContractInstance.getNewItemId();
+    const productId = nextStoreProductId.toString();
+
     const productImageArrayBuffer = await productImage.arrayBuffer();
     const productImageUint8Array = new Uint8Array(productImageArrayBuffer);
 
     const uploadedFile = await fleekStorage.upload({
       apiKey: process.env.RAZZLE_FLEEK_API_KEY,
       apiSecret: process.env.RAZZLE_FLEEK_API_SECRET,
-      // TODO:
-      key: "test-photo.jpg",
+      key: `${productId}.jpg`,
       data: productImageUint8Array,
       httpUploadProgressCallback: (event) => {
         console.log(Math.round((event.loaded / event.total) * 100) + "% done");
@@ -123,8 +125,7 @@ const Admin = () => {
     const uploadedMetadata = await fleekStorage.upload({
       apiKey: process.env.RAZZLE_FLEEK_API_KEY,
       apiSecret: process.env.RAZZLE_FLEEK_API_SECRET,
-      // TODO:
-      key: "test-metada.json",
+      key: `${productId}.json`,
       data: productMetadata,
       httpUploadProgressCallback: (event) => {
         console.log(Math.round((event.loaded / event.total) * 100) + "% done");
