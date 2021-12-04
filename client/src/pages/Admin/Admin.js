@@ -93,12 +93,12 @@ const Admin = () => {
     let nonValid = false;
     Object.keys(formData).forEach((key) => {
       if (!formData[key]) {
-        toast.error(`${key} cannot be empty`, {position: "bottom-right"});
+        toast.error(`${key} cannot be empty`, { position: "bottom-right" });
         nonValid = true;
       }
     });
     if (!productImage) {
-      toast.error(`product image cannot be empty`, {position: "bottom-right"});
+      toast.error(`product image cannot be empty`, { position: "bottom-right" });
       nonValid = true;
     }
     if (nonValid) return;
@@ -145,12 +145,13 @@ const Admin = () => {
       const transaction = await StoreContractInstance.mintNewItem(priceInWei, amount);
       await transaction.wait(1);
 
-      setMintingProductStatus("");
       setFormData(INITIAL_FORM_DATA);
-      toast.success("New product minted successfully", {position: "bottom-right"});
+      setProductImage(null);
+      setMintingProductStatus("");
+      toast.success("New product minted successfully", { position: "bottom-right" });
     } catch (e) {
       setMintingProductStatus("");
-      toast.error(e.message, {position: "bottom-right"})
+      toast.error(e.message, { position: "bottom-right" });
     }
   };
 

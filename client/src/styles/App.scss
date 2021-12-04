@@ -10,10 +10,15 @@ body {
   box-sizing: border-box;
 }
 
+img {
+  height: auto;
+  max-width: 100%;
+}
+
 button {
   background-color: #242424;
+  border: 1px solid #242424;
   color: #fff;
-  border: none;
   padding: 10px 20px;
   cursor: pointer;
 }
