@@ -1,10 +1,11 @@
 import React, {useCallback, useEffect, useState} from "react";
 import { useWeb3React } from "@web3-react/core";
 import { ethers } from "ethers";
+import {toast} from "react-toastify";
+import { Link } from "react-router-dom";
 import styles from "./Home.module.scss";
 import { useContract } from "../../hooks/useContract";
 import { StoreContract } from "../../static/contracts/StoreContract";
-import {toast} from "react-toastify";
 
 const Home = () => {
   const { chainId } = useWeb3React();
@@ -71,7 +72,9 @@ const Home = () => {
               <p className={styles.productDescription}>{product.description}</p>
               <p className={styles.productPrice}>{product.priceEther} ETH</p>
               <button className={styles.buyButton} onClick={() => handleBuyClick(product.id, product.priceInWei)}>Buy item</button>
-              <button className={styles.viewButton}>View item</button>
+              <Link to={`/redeem/${product.id}`}>
+                <button className={styles.redeemButton}>Redeem item</button>
+              </Link>
             </div>
           ))
         }

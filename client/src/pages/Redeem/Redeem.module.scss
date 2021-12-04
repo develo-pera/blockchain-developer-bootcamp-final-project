@@ -1,0 +1,31 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 50px 20px;
+  width: 100%;
+}
+
+.wrapperFlex {
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.productName {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.productDescription {
+  margin: 0 0 30px;
+}
+
+.disclaimer {
+  font-size: 14px;
+}
+
+.redeemButton {
+  width: 100%;
+}
