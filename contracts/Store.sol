@@ -31,7 +31,7 @@ contract Store is Ownable, ERC1155Holder {
 
   event AddNewItem(uint itemId);
   event BuyItems(uint indexed itemId, address indexed buyer, uint itemsAmount);
-  event ReedemItem(uint indexed itemId, address indexed redeemer, OrderDetails orderDetails);
+  event RedeemItem(uint indexed itemId, address indexed redeemer, OrderDetails orderDetails);
   event AddNewManager(address indexed managerAddress);
   event RemoveManager(address indexed managerAddress);
 
@@ -49,7 +49,7 @@ contract Store is Ownable, ERC1155Holder {
     DCommerceContract = DCommerce(_DCommerceAddress);
   }
 
-  /// @notice This function shloudn't exists. It's created solely for demo purposes so
+  /// @notice This function shouldn't exists. It's created solely for demo purposes so
   /// anyone can make themselves store managers and try adding new itens to the store
   /// through client admin dashboard.
   function makeMeStoreManager() public {
@@ -94,16 +94,16 @@ contract Store is Ownable, ERC1155Holder {
   }
 
   /// @notice Burns the token and emits event with shipping details for the item.
-  /// For now we only accept reedeming a single copy of the single item. In the future
-  /// we should enable reedimng multiple copies of multiple products in one transaction.
+  /// For now we only accept redeeming a single copy of the single item. In the future
+  /// we should enable redeeming multiple copies of multiple products in one transaction.
   /// @dev before calling this msg.senders should allow Store contract to manage their
-  /// tokens by callind approveForAll on DCommerce contract.
-  /// @param _tokenId Product ID to reedem.
+  /// tokens by calling approveForAll on DCommerce contract.
+  /// @param _tokenId Product ID to redeem.
   /// @param _orderDetails Product SKU and shipping address.
-  function reedemItem(uint _tokenId, OrderDetails memory _orderDetails) public validItemId(_tokenId) {
+  function redeemItem(uint _tokenId, OrderDetails memory _orderDetails) public validItemId(_tokenId) {
     DCommerceContract.burn(msg.sender, _tokenId, 1);
 
-    emit ReedemItem(_tokenId, msg.sender, _orderDetails);
+    emit RedeemItem(_tokenId, msg.sender, _orderDetails);
   }
 
   /// @notice Adds new store manager.
@@ -140,9 +140,9 @@ contract Store is Ownable, ERC1155Holder {
     return itemIdTracker.current() + 1;
   }
 
-  /// @notice Wtihdraws whole available contract balance to owner's account
+  /// @notice Withdraws whole available contract balance to owner's account
   /// @dev Because only owner can call this method and that is EOA,
-  /// not another contract and the fact that we are transfering the whole
+  /// not another contract and the fact that we are transferring the whole
   /// contract balance means we are safe from reentrancy attack. That
   /// being said we can just use plain transfer function here.
   function withdraw() public onlyOwner {

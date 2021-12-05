@@ -122,7 +122,7 @@ contract("Store", (accounts) => {
     await truffleAssert.reverts(StoreInstance.buyItems(1, 3, {value: price * 3}), "Out of stock");
   });
 
-  it("should allow token owner to reedem the product", async () => {
+  it("should allow token owner to redeem the product", async () => {
     const price = web3.utils.toWei("0.01", "ether");
     const amount = 2;
     await StoreInstance.makeMeStoreManager();
@@ -142,7 +142,7 @@ contract("Store", (accounts) => {
     DCommerceInstance.setApprovalForAll(StoreInstance.address, true, {from: accounts[0]});
 
     const balanceBefore = await DCommerceInstance.balanceOf(accounts[0], 1);
-    const transactionResult = await StoreInstance.reedemItem(1, orderDetails);
+    const transactionResult = await StoreInstance.redeemItem(1, orderDetails);
     const balanceAfter = await DCommerceInstance.balanceOf(accounts[0], 1);
 
     expect(balanceBefore.toNumber()).to.be.equal(1);
@@ -150,7 +150,7 @@ contract("Store", (accounts) => {
 
     // TODO: Testing orderDeatils struct was real pain in the ass,
     // leaving for now and just testing if event was emited or not
-    truffleAssert.eventEmitted(transactionResult, "ReedemItem");
+    truffleAssert.eventEmitted(transactionResult, "RedeemItem");
   });
 
   it("should allow owner to add new store manager", async () => {
