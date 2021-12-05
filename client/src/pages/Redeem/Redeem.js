@@ -10,6 +10,13 @@ import { DCommerceContract } from "../../static/contracts/DCommerceContract";
 import { toast } from "react-toastify";
 
 const Redeem = () => {
+  const INITIAL_FORM_DATA = {
+    street: "",
+    city: "",
+    zipCode: "",
+    country: "",
+  };
+
   const params = useParams();
   const { account, chainId } = useWeb3React();
   const [isPageLoading, setIsPageLoading] = useState(true);
@@ -17,6 +24,7 @@ const Redeem = () => {
   const [copiesOwnedByUser, setCopiesOwnedByUser] = useState(0);
   const [isApproved, setIsApproved] = useState(false);
   const [waitingForTransaction, setWaitingForTransaction] = useState(false);
+  const [formData, setFormData] = useState(INITIAL_FORM_DATA);
   const [waitingForRedeemTransaction, setWaitingForRedeemTransaction] = useState(false);
   const StoreContractInstance = useContract(StoreContract.address[chainId], StoreContract.abi);
   const DCommerceContractInstance = useContract(DCommerceContract.address[chainId], DCommerceContract.abi);
@@ -64,7 +72,42 @@ const Redeem = () => {
     }
   };
 
-  const redeemItem = () => console.log("redeem");
+  const handleFormChange = (e, field) => {
+    setFormData({
+      ...formData,
+      [field]: e.target.value,
+    });
+  };
+
+  const redeemItem = async () => {
+    // Really poor validation just to have some
+    let nonValid = false;
+    Object.keys(formData).forEach((key) => {
+      if (!formData[key]) {
+        toast.error(`${key} cannot be empty`, { position: "bottom-right" });
+        nonValid = true;
+      }
+    });
+    if (nonValid) return;
+
+    try {
+      setWaitingForRedeemTransaction(true);
+      const productId = params.id;
+      const orderDetails = {
+        sku: `SKU-${productId}`,
+        shippingAddress: formData,
+      }
+
+      const redeemTransaction = await StoreContractInstance.redeemItem(productId, orderDetails);
+      await redeemTransaction.wait(1);
+
+      setFormData(INITIAL_FORM_DATA);
+      toast.success("Redeeming successful", {position: "bottom-right"})
+    } catch (e) {
+      setWaitingForRedeemTransaction(false);
+      toast.error(e.message, { position: "bottom-right" });
+    }
+  };
 
   const onButtonClick = isApproved ? redeemItem : setStoreAsOperator;
 
@@ -92,6 +135,20 @@ const Redeem = () => {
           ? `You own ${copiesOwnedByUser} out of ${product.stock} copies. Would you like to redeem one now?`
           : `Before you can redeem you have to approve. You have to do this only once`}
       </p>
+      {
+        isApproved &&
+          <div className={styles.form}>
+            <p className={styles.formTitle}>Enter shipping details:</p>
+            <p className={styles.label}>Street</p>
+            <input type="text" value={formData["street"]} onChange={(e) => handleFormChange(e, "street")} />
+            <p className={styles.label}>City</p>
+            <input type="text" value={formData["city"]} onChange={(e) => handleFormChange(e, "city")} />
+            <p className={styles.label}>Zip code</p>
+            <input type="text" value={formData["zipCode"]} onChange={(e) => handleFormChange(e, "zipCode")} />
+            <p className={styles.label}>Country</p>
+            <input type="text" value={formData["country"]} onChange={(e) => handleFormChange(e, "country")} />
+          </div>
+      }
       <button onClick={onButtonClick} className={styles.redeemButton}>
         {isApproved
           ? waitingForRedeemTransaction
