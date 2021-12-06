@@ -1,0 +1,3 @@
+Network: Kovan
+DCommerce Contract Address: 0x3369a08eebe1572545ACb3899C25f925D5D7376d
+Store Contract Address: 0x48F39C62500E3c46BFa9d5568F95f1055F5e78E6
