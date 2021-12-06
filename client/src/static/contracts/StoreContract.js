@@ -2,7 +2,7 @@ import { ChainId } from "../../connectors";
 
 export const StoreContract = {
   address: {
-    [ChainId.Kovan]: "",
+    [ChainId.Kovan]: "0x48F39C62500E3c46BFa9d5568F95f1055F5e78E6",
     [ChainId.Localhost]: "0x70b4C21f65FFD2Ca8Fe109c0223f889c8b79C3CB",
   },
   abi: [

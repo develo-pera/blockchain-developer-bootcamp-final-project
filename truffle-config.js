@@ -21,10 +21,8 @@
 
  require('dotenv').config();
 
-// const HDWalletProvider = require('@truffle/hdwallet-provider');
-//
-// const fs = require('fs');
-// const mnemonic = fs.readFileSync(".secret").toString().trim();
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+const mnemonic = process.env.MNEMONIC;
 
 module.exports = {
   /**
@@ -48,6 +46,11 @@ module.exports = {
      host: "127.0.0.1",     // Localhost (default: none)
      port: 9545,            // Standard Ethereum port (default: none)
      network_id: "1337",    // Any network (default: none)
+    },
+    kovan: {
+      provider: () => new HDWalletProvider(mnemonic, `wss://kovan.infura.io/ws/v3/${process.env.INFURA_PROJECT_ID}`),
+      network_id: 42,
+      timeoutBlocks: 200,
     },
     // Another network with more advanced options...
     // advanced: {
