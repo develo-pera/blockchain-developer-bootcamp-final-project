@@ -1,6 +1,8 @@
+@import "../../styles/breakpoints";
+
 .controls {
   display: grid;
-  grid-template-columns: repeat(3, auto);
+  grid-template-columns: repeat(4, auto);
   grid-column-gap: 20px;
   align-items: center;
   font-size: 14px;
@@ -12,11 +14,19 @@
   grid-column-gap: 12px;
   align-items: center;
   margin-left: 30px;
+
+  @include breakpoint(tablet) {
+    margin-left: 0;
+  }
 }
 
 .username {
   font-size: 14px;
   font-weight: 600;
+
+  @include breakpoint(tablet) {
+    display: none;
+  }
 }
 
 .connectButton {

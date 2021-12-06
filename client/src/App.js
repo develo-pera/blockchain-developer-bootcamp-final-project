@@ -9,6 +9,7 @@ import Layout from "./layouts/Layout";
 import Home from "./pages/Home/Home";
 import Admin from "./pages/Admin/Admin";
 import Redeem from "./pages/Redeem/Redeem";
+import Orders from "./pages/Orders/Orders";
 
 function getLibrary(provider) {
   return new ethers.providers.Web3Provider(provider);
@@ -20,6 +21,7 @@ const App = () => {
       <Layout>
         <Route exact path="/" component={Home} />
         <Route path="/admin" component={Admin} />
+        <Route path="/order-list" component={Orders} />
         <Route path="/redeem/:id" component={Redeem} />
       </Layout>
       <ToastContainer />

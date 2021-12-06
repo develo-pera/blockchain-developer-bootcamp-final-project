@@ -10,10 +10,10 @@ import { StoreContract } from "../../static/contracts/StoreContract";
 
 const Admin = () => {
   const INITIAL_FORM_DATA = {
-    name: null,
-    description: null,
-    price: null,
-    stock: null,
+    name: "",
+    description: "",
+    price: "",
+    stock: "",
   };
 
   const { account, chainId } = useWeb3React();

@@ -14,6 +14,7 @@ const NavigationControls = () => {
     return (
       <div className={styles.controls}>
         <a href="/">Shop</a>
+        <a href="/order-list">Orders</a>
         <a href="/admin">Admin panel</a>
         <div className={styles.userProfile}>
           <p className={styles.username}>{shortenAddress(account)}</p>
