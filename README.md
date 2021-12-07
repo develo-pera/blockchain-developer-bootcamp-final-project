@@ -15,6 +15,7 @@ In the simplest way, a platform like that should work like this:
 5. Once a NFT owner wants to redeem the physical good NFT represents, they have to go to the brands website and burn the token. *(For simplicity and for now in order to reedem we will ask users to burn the NFTs. In production ready version users can redeem without burning, we keep the track of each individual item and just change flag to `reedemed` to true.)*
 
 ### Demo: https://dcommerce-nft.netlify.app/
+### Project walk-through screencast: https://youtu.be/8bW5JYhASiA
 
 ## Directory structure
 - `client`: Project's React frontend.
