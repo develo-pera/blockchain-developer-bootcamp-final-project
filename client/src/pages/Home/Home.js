@@ -8,7 +8,7 @@ import { useContract } from "../../hooks/useContract";
 import { StoreContract } from "../../static/contracts/StoreContract";
 
 const Home = () => {
-  const { chainId } = useWeb3React();
+  const { active, chainId } = useWeb3React();
   const [isPageLoading, setIsPageLoading] = useState(true);
   const [productList, setProductList] = useState([]);
   const StoreContractInstance = useContract(StoreContract.address[chainId], StoreContract.abi);
@@ -48,6 +48,10 @@ const Home = () => {
       toast.error(e.message, { position: "bottom-right" });
     }
   };
+
+  if (!active) {
+    return <div className={styles.wrapperFlex}>Please connect with your Metamask to continue</div>;
+  }
 
   if (isPageLoading) {
     return <div className={styles.wrapperFlex}>Fetching products....</div>;
